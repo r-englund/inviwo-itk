@@ -97,74 +97,74 @@ void ITKTest::process() {
     auto keepAlive = volumeB_.getData();
 
     volumeA_.getData()->getRepresentation<VolumeRAM>()->dispatch<void, Filter>([&](auto ramA) {
-        using VolType = util::PrecsionType<decltype(ramA)>;
-        using T = util::PrecsionValueType<decltype(ramA)>;
-        using C = typename util::value_type<T>::type;
+        //using VolType = util::PrecsionType<decltype(ramA)>;
+        //using T = util::PrecsionValueType<decltype(ramA)>;
+        //using C = typename util::value_type<T>::type;
 
-        // ITK Types
-        using Img = itk::Image<C, 3>;
-        using ImportFilter = itk::ImportImageFilter<C, 3>;
-        using Vec3 = itk::Vector<float, 3>;
-        using u8Vec3 = itk::Vector<unsigned char, 3>;
-        using Vec3Img = itk::Image<Vec3, 3>;
-        using Demon = itk::DemonsRegistrationFilter<Img, Img, Vec3Img>;
-        using SymDemon = itk::SymmetricForcesDemonsRegistrationFilter<Img, Img, Vec3Img>;
+        //// ITK Types
+        //using Img = itk::Image<C, 3>;
+        //using ImportFilter = itk::ImportImageFilter<C, 3>;
+        //using Vec3 = itk::Vector<float, 3>;
+        //using u8Vec3 = itk::Vector<unsigned char, 3>;
+        //using Vec3Img = itk::Image<Vec3, 3>;
+        //using Demon = itk::DemonsRegistrationFilter<Img, Img, Vec3Img>;
+        //using SymDemon = itk::SymmetricForcesDemonsRegistrationFilter<Img, Img, Vec3Img>;
 
-        using Warp = itk::WarpImageFilter<Img, Img, Vec3Img>;
-        using LinFunc = itk::LinearInterpolateImageFunction<Img, double>;
+        //using Warp = itk::WarpImageFilter<Img, Img, Vec3Img>;
+        //using LinFunc = itk::LinearInterpolateImageFunction<Img, double>;
 
-        auto ramB = static_cast<decltype(ramA)>(volumeB_.getData()->getRepresentation<VolumeRAM>());
+        //auto ramB = static_cast<decltype(ramA)>(volumeB_.getData()->getRepresentation<VolumeRAM>());
 
-        auto imgA = itkutil::fromInviwo(*ramA, *volumeA_.getData());
-        auto imgB = itkutil::fromInviwo(*ramB, *volumeB_.getData());
+        //auto imgA = itkutil::fromInviwo(*ramA, *volumeA_.getData());
+        //auto imgB = itkutil::fromInviwo(*ramB, *volumeB_.getData());
 
 
 
-        auto warp = Warp::New();
-        auto interpolator = LinFunc::New();
+        //auto warp = Warp::New();
+        //auto interpolator = LinFunc::New();
 
-        auto run = [&](auto reg) {
-            reg->SetFixedImage(imgA);
-            reg->SetMovingImage(imgB);
-            if (setInitDisplacementField_) {
-                using Grad = itk::GradientImageFilter<Img>;
-                using Cast =
-                    itk::CastImageFilter<Grad::OutputImageType, Demon::DisplacementFieldType>;
+        //auto run = [&](auto reg) {
+        //    reg->SetFixedImage(imgA);
+        //    reg->SetMovingImage(imgB);
+        //    if (setInitDisplacementField_) {
+        //        using Grad = itk::GradientImageFilter<Img>;
+        //        using Cast =
+        //            itk::CastImageFilter<Grad::OutputImageType, Demon::DisplacementFieldType>;
 
-                auto gradFilter = Grad::New();
-                gradFilter->SetInput(imgA);
-                gradFilter->Update();
-                auto caster = Cast::New();
-                caster->SetInput(gradFilter->GetOutput());
-                caster->Update();
+        //        auto gradFilter = Grad::New();
+        //        gradFilter->SetInput(imgA);
+        //        gradFilter->Update();
+        //        auto caster = Cast::New();
+        //        caster->SetInput(gradFilter->GetOutput());
+        //        caster->Update();
 
-                reg->SetInitialDisplacementField(caster->GetOutput());
-            }
-            reg->SetNumberOfIterations(numOfIterations_.get());
+        //        reg->SetInitialDisplacementField(caster->GetOutput());
+        //    }
+        //    reg->SetNumberOfIterations(numOfIterations_.get());
 
-            reg->SetStandardDeviations(1.0);
-            reg->Update();
+        //    reg->SetStandardDeviations(1.0);
+        //    reg->Update();
 
-            warp->SetInput(imgB);
-            warp->SetInterpolator(interpolator);
-            warp->SetOutputSpacing(imgA->GetSpacing());
-            warp->SetOutputOrigin(imgA->GetOrigin());
-            warp->SetOutputDirection(imgA->GetDirection());
-            warp->SetDisplacementField(reg->GetOutput());
-            warp->Update();
-            //return imgA;
+        //    warp->SetInput(imgB);
+        //    warp->SetInterpolator(interpolator);
+        //    warp->SetOutputSpacing(imgA->GetSpacing());
+        //    warp->SetOutputOrigin(imgA->GetOrigin());
+        //    warp->SetOutputDirection(imgA->GetDirection());
+        //    warp->SetDisplacementField(reg->GetOutput());
+        //    warp->Update();
+        //    //return imgA;
 
-            return warp->GetOutput();
-            // return reg->GetOutput();*/
-        };
+        //    return warp->GetOutput();
+        //    // return reg->GetOutput();*/
+        //};
 
-        if (useSymDemon_) {
-            auto reg = SymDemon::New();
-            outVol = itkutil::fromITK(*run(reg));
-        } else {
-            auto reg = Demon::New();
-            outVol = itkutil::fromITK(*run(reg));
-        }
+        //if (useSymDemon_) {
+        //    auto reg = SymDemon::New();
+        //    outVol = itkutil::fromITK(*run(reg));
+        //} else {
+        //    auto reg = Demon::New();
+        //    outVol = itkutil::fromITK(*run(reg));
+        //}
 
     });
 

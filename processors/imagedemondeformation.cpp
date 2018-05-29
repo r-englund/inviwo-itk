@@ -107,10 +107,12 @@ void ImageDemonDeformation::process() {
         using Img = itk::Image<C, 2>;
         using ImportFilter = itk::ImportImageFilter<C, 2>;
         using Vec2 = itk::Vector<float, 2>;
+        using CoVec2 = itk::CovariantVector<float, 2>;
         using u8Vec2 = itk::Vector<unsigned char, 2>;
         using Vec2Img = itk::Image<Vec2, 2>;
-        using Demon = itk::DemonsRegistrationFilter<Img, Img, Vec2Img>;
-        using SymDemon = itk::SymmetricForcesDemonsRegistrationFilter<Img, Img, Vec2Img>;
+        using CoVec2Img = itk::Image<CoVec2, 2>;
+        using Demon = itk::DemonsRegistrationFilter<Img, Img, CoVec2Img>;
+        using SymDemon = itk::SymmetricForcesDemonsRegistrationFilter<Img, Img, CoVec2Img>;
 
         using Warp = itk::WarpImageFilter<Img, Img, Vec2Img>;
         using LinFunc = itk::LinearInterpolateImageFunction<Img, double>;
@@ -141,7 +143,7 @@ void ImageDemonDeformation::process() {
                 caster->SetInput(gradFilter->GetOutput());
                 caster->Update();
 
-                reg->SetInitialDisplacementField(caster->GetOutput());
+                //reg->SetInitialDisplacementField(caster->GetOutput());
             }
             reg->SetNumberOfIterations(numOfIterations_.get());
 
@@ -153,7 +155,7 @@ void ImageDemonDeformation::process() {
             warp->SetOutputSpacing(fImg->GetSpacing());
             warp->SetOutputOrigin(fImg->GetOrigin());
             warp->SetOutputDirection(fImg->GetDirection());
-            warp->SetDisplacementField(reg->GetOutput());
+            //warp->SetDisplacementField(reg->GetOutput());
             warp->Update();
 
             outport_.setData(itkutil::fromITK(*warp->GetOutput()));
