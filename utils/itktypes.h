@@ -47,7 +47,6 @@
 #include "itkImportImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 
-#pragma optimize("", off)
 
 namespace inviwo {
 

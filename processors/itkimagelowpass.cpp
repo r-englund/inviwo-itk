@@ -27,7 +27,6 @@
  *
  *********************************************************************************/
 
-#pragma optimize( "", off )  
 
 #include <modules/itk/processors/itkimagelowpass.h>
 
